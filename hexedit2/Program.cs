@@ -1,4 +1,6 @@
 ﻿using CommandLine;
+using IniParser.Model;
+using IniParser;
 using System.Text;
 using static Haruka.Arcade.Hexedit2.Options;
 using static Haruka.Arcade.Hexedit2.Patch;
@@ -110,7 +112,7 @@ namespace Haruka.Arcade.Hexedit2 {
                 return 4;
             }
 
-            List<long> offsets = Patch.SearchOffsets(file, original, unknownsPatch, opts.MaximumHits);
+            List<long> offsets = Patch.SearchOffsets(file, original, unknownsOriginal, opts.MaximumHits);
             if (offsets.Count == 0) {
                 Log("No matches found");
                 return 5;
@@ -148,26 +150,35 @@ namespace Haruka.Arcade.Hexedit2 {
                 return 3;
             }
 
-            IniFile script = new IniFile(opts.ScriptFile);
-            
-            foreach (string sec in script.GetSections()) {
+            FileIniDataParser parser = new FileIniDataParser();
+            IniData script = parser.ReadFile(opts.ScriptFile, Encoding.UTF8);
+
+            foreach (SectionData sd in script.Sections) {
+                String sec = sd.SectionName;
                 Log("Processing: " + sec);
                 try {
-                    PatchType type = Enum.Parse<PatchType>(script.Read("Type", sec));
-                    String mode = script.Read("Mode", sec);
+                    PatchType type = Enum.Parse<PatchType>(script[sec]["Type"]);
+                    String mode = script[sec]["Mode"];
+                    String patchString = script[sec]["Patch"];
+                    String originalString = script[sec]["Original"];
+
+                    LogVerbose("Mode: " + mode);
+                    LogVerbose("Type: " + type);
+                    LogVerbose("Original: " + originalString);
+                    LogVerbose("Patch:" + patchString);
 
                     List<long> unknownsPatch;
                     List<long> unknownsOriginal = null;
 
+
                     byte[] patch;
                     try {
-                        patch = Patch.Parse(script.Read("Patch", sec), type, out unknownsPatch);
+                        patch = Patch.Parse(patchString, type, out unknownsPatch);
                     } catch {
                         Log("Failed to parse patch string");
                         throw;
                     }
 
-                    String originalString = script.Read("Original", sec);
                     byte[] original = null;
                     if (!String.IsNullOrEmpty(originalString)) {
                         try {
@@ -181,7 +192,7 @@ namespace Haruka.Arcade.Hexedit2 {
                     if (mode == "Single") {
                         long offset = 0;
                         try {
-                            offset = Convert.ToInt64(script.Read("Offset", sec));
+                            offset = Convert.ToInt64(script[sec]["Offset"]);
                         } catch {
                             Log("Failed to parse offset");
                             throw;
@@ -199,7 +210,10 @@ namespace Haruka.Arcade.Hexedit2 {
                         LogVerbose("Result: " + pr);
                     } else if (mode == "Multi") {
 
-                        List<long> offsets = Patch.SearchOffsets(file, original, unknownsPatch, Int32.Parse(script.Read("MaximumHits", sec)));
+                        int hits = Int32.MaxValue;
+                        Int32.TryParse(script[sec]["MaximumHits"], out hits);
+
+                        List<long> offsets = Patch.SearchOffsets(file, original, unknownsOriginal, hits);
                         if (offsets.Count == 0) {
                             throw new Exception("No matches found");
                         }

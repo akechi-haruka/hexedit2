@@ -45,3 +45,4 @@ Remarks:
 * You cannot use string modes if the patch bytes are longer than the original bytes.
 * Pattern matching is possible by replacing bytes within originalbytes arguments with "0x??".
  - It is also possible to carry over the pattern to patchbytes by also specifying "0x??" in patchbytes.
+* Script files are expected to be encoded in UTF-8.
