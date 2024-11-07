@@ -16,7 +16,7 @@ namespace Haruka.Arcade.Hexedit2 {
             if (type == PatchType.Binary) {
                 List<byte> tobytes = new List<byte>();
                 unknownBytes = new List<long>();
-                string[] array = patchString.Split(',');
+                string[] array = patchString.Split(new char[] { ',', ' ' });
                 for (int i = 0; i < array.Length; i++) {
                     string s = array[i];
                     if (s.Equals("??") || s.Equals("0x??")) {
@@ -108,12 +108,13 @@ namespace Haruka.Arcade.Hexedit2 {
                     }
                 }
                 Program.LogVerbose("Performing search in " + data.Length + " bytes for " + str);
+                Program.LogVerbose("Unknown bytes are: " + string.Join(" ", unknownBytes));
             }
             int hitOffset = 0;
             for (int i = 0; i < data.Length - patch.Length; i++) {
                 if (data[i] == patch[hitOffset]) {
                     for (hitOffset = 1; i + hitOffset < data.Length - patch.Length && hitOffset < patch.Length; hitOffset++) {
-                        if (unknownBytes.Contains(i) || data[i + hitOffset] == patch[hitOffset]) {
+                        if (unknownBytes.Contains(hitOffset) || data[i + hitOffset] == patch[hitOffset]) {
                             if (hitOffset == patch.Length - 1) {
                                 Program.Log("Successful hit at 0x" + i.ToString("X2"));
                                 results.Add(i);
