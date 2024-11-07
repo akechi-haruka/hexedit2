@@ -170,33 +170,38 @@ namespace Haruka.Arcade.Hexedit2 {
                 try {
                     PatchType type = Enum.Parse<PatchType>(script[sec]["Type"]);
                     String mode = script[sec]["Mode"];
-                    String patchString = script[sec]["Patch"].Trim();
-                    String originalString = script[sec]["Original"].Trim();
+                    String patchString = script[sec]["Patch"]?.Trim();
+                    String originalString = script[sec]["Original"]?.Trim();
 
                     LogVerbose("Mode: " + mode);
                     LogVerbose("Type: " + type);
                     LogVerbose("Original: " + originalString);
                     LogVerbose("Patch:" + patchString);
 
-                    List<long> unknownsPatch;
+                    List<long> unknownsPatch = null;
                     List<long> unknownsOriginal = null;
-
-
-                    byte[] patch;
-                    try {
-                        patch = Patch.Parse(patchString, type, out unknownsPatch);
-                    } catch {
-                        Log("Failed to parse patch string");
-                        throw;
-                    }
-
+                    byte[] patch = null;
                     byte[] original = null;
-                    if (!String.IsNullOrEmpty(originalString)) {
+
+                    if (mode != "MultiTable") {
+                        if (patchString == null) {
+                            throw new Exception("Patch is unset");
+                        }
+
                         try {
-                            original = Patch.Parse(originalString, type, out unknownsOriginal);
+                            patch = Patch.Parse(patchString, type, out unknownsPatch);
                         } catch {
-                            Log("Failed to parse original string");
+                            Log("Failed to parse patch string");
                             throw;
+                        }
+
+                        if (!String.IsNullOrEmpty(originalString)) {
+                            try {
+                                original = Patch.Parse(originalString, type, out unknownsOriginal);
+                            } catch {
+                                Log("Failed to parse original string");
+                                throw;
+                            }
                         }
                     }
 
@@ -245,6 +250,57 @@ namespace Haruka.Arcade.Hexedit2 {
                             }
 
                             LogVerbose("Patch Result: " + pr);
+                        }
+
+                    } else if (mode == "MultiTable") {
+
+                        int hits = 0;
+                        Int32.TryParse(script[sec]["MaximumHits"], out hits);
+                        if (hits <= 0) {
+                            hits = Int32.MaxValue;
+                        }
+
+                        foreach (KeyData kd in sd.Keys) {
+                            if (kd.KeyName != "Type" && kd.KeyName != "Mode" && kd.KeyName != "MaximumHits") {
+
+                                originalString = kd.KeyName;
+                                patchString = kd.Value;
+
+                                try {
+                                    patch = Patch.Parse(patchString, type, out unknownsPatch);
+                                } catch {
+                                    Log("Failed to parse patch string");
+                                    throw;
+                                }
+
+                                try {
+                                    original = Patch.Parse(originalString, type, out unknownsOriginal);
+                                } catch {
+                                    Log("Failed to parse original string");
+                                    throw;
+                                }
+
+                                List<long> offsets = Patch.SearchOffsets(file, original, unknownsOriginal, hits);
+                                if (offsets.Count == 0) {
+                                    if (Patch.SearchOffsets(file, patch, unknownsPatch, 1).Count > 0) {
+                                        Log("No matches, but patch was already found.");
+                                        continue;
+                                    } else {
+                                        throw new Exception("No matches found");
+                                    }
+                                }
+
+                                foreach (long offset in offsets) {
+                                    Log("Patching offset 0x" + offset.ToString("X2"));
+                                    PatchResult pr = Patch.ApplyPatch(ref file, offset, patch, original, unknownsPatch, unknownsOriginal, type != PatchType.Binary);
+                                    if (pr != PatchResult.OK && pr != PatchResult.OK_ALREADY) {
+                                        throw new Exception("Patch failed: " + pr);
+                                    }
+
+                                    LogVerbose("Patch Result: " + pr);
+                                }
+
+                            }
                         }
 
                     } else {

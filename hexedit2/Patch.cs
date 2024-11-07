@@ -28,21 +28,25 @@ namespace Haruka.Arcade.Hexedit2 {
                 }
                 return tobytes.ToArray();
             } else if (type == PatchType.StringASCII) {
-                return Encoding.ASCII.GetBytes(patchString);
+                return Encoding.ASCII.GetBytes(ReplaceSpecialCharacters(patchString));
             } else if (type == PatchType.StringUTF8) {
-                return Encoding.UTF8.GetBytes(patchString);
+                return Encoding.UTF8.GetBytes(ReplaceSpecialCharacters(patchString));
             } else if (type == PatchType.StringShiftJIS) {
-                return Encoding.GetEncoding("SHIFT-JIS").GetBytes(patchString);
+                return Encoding.GetEncoding("SHIFT-JIS").GetBytes(ReplaceSpecialCharacters(patchString));
             } else {
                 throw new Exception("invalid patch type: " + type);
             }
+        }
+
+        internal static String ReplaceSpecialCharacters(string str) {
+            return str.Replace("\\n", "\n").Replace("\\t", "\t").Replace("\\0", "\0");
         }
 
         internal static PatchResult ApplyPatch(ref byte[] data, long offset, byte[] patch, byte[] original, List<long> unknownBytesPatch, List<long> unknownBytesOriginal, bool isString = false) {
             if (original != null) {
                 if (isString) {
                     if (patch.Length > original.Length) {
-                        Program.Log("String length ("+patch.Length+") is too long for original ("+original.Length+")");
+                        Program.Log("String length ("+patch.Length+", "+Encoding.UTF8.GetString(patch)+") is too long for original ("+original.Length+")");
                         return PatchResult.STRING_TOO_LONG;
                     }
                 } else if (original.Length != patch.Length) {
