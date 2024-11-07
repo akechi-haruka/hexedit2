@@ -8,9 +8,16 @@ Successor of hexedit-cmd.
 
 Global switches:
 -v: Verbose output
+-s: Silent output
 -t <Binary/StringASCII/StringUTF8/StringShiftJIS>: Select patch format
 
 Binary is assumed default. For binary data, specify in hexadecimal lists, ex.: 0x00,0x01,0x02,...
+
+Remarks:
+* You cannot use string modes if the patch bytes are longer than the original bytes.
+* Pattern matching is possible by replacing bytes within originalbytes arguments with "0x??".
+ - It is also possible to carry over the pattern to patchbytes by also specifying "0x??" in patchbytes.
+* Script files are expected to be encoded in UTF-8.
 
 Modes of operation:
 
@@ -41,8 +48,10 @@ Switches:
 -c: Continue even if a patch fails. (This includes 0-hits from Type=Multi)
 
 
-Remarks:
-* You cannot use string modes if the patch bytes are longer than the original bytes.
-* Pattern matching is possible by replacing bytes within originalbytes arguments with "0x??".
- - It is also possible to carry over the pattern to patchbytes by also specifying "0x??" in patchbytes.
-* Script files are expected to be encoded in UTF-8.
+find:
+hexedit2 find <inputfile> <bytes>
+
+Finds the offset(s) of the given bytes. Even when the -s flag is specified, the output will contain one offset per line.
+
+Example:
+hexedit2 find -t StringShiftJIS L:\SDVX\kantai7\fc.exe ALL.Net

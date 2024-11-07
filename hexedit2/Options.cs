@@ -14,6 +14,9 @@ namespace Haruka.Arcade.Hexedit2 {
             [Option('v', Required = false, HelpText = "Verbose output")]
             public bool Verbose { get; set; }
 
+            [Option('s', Required = false, HelpText = "Silent output")]
+            public bool Silent { get; set; }
+
             [Option('t', Required = false, HelpText = "Type of the patch data (Binary, StringASCII, StringUTF8, StringShiftJIS)", Default = PatchType.Binary)]
             public PatchType Type { get; set; }
 
@@ -38,6 +41,9 @@ namespace Haruka.Arcade.Hexedit2 {
 
             [Option('v', Required = false, HelpText = "Verbose output")]
             public bool Verbose { get; set; }
+
+            [Option('s', Required = false, HelpText = "Silent output")]
+            public bool Silent { get; set; }
 
             [Option('m', Required = false, HelpText = "Maximum hits", Default = int.MaxValue)]
             public int MaximumHits { get; set; }
@@ -65,6 +71,9 @@ namespace Haruka.Arcade.Hexedit2 {
             [Option('v', Required = false, HelpText = "Verbose output")]
             public bool Verbose { get; set; }
 
+            [Option('s', Required = false, HelpText = "Silent output")]
+            public bool Silent { get; set; }
+
             [Option('c', Required = false, HelpText = "Continue even if a patch fails")]
             public bool ContinueOnError { get; set; }
 
@@ -81,6 +90,25 @@ namespace Haruka.Arcade.Hexedit2 {
 
         public enum PatchType {
             Binary, StringASCII, StringUTF8, StringShiftJIS
+        }
+
+        [Verb("find", HelpText = "Find an offset")]
+        public class FindOptions {
+
+            [Option('v', Required = false, HelpText = "Verbose output")]
+            public bool Verbose { get; set; }
+
+            [Option('s', Required = false, HelpText = "Silent output")]
+            public bool Silent { get; set; }
+
+            [Option('t', Required = false, HelpText = "Type of the patch data (Binary, StringASCII, StringUTF8, StringShiftJIS)", Default = PatchType.Binary)]
+            public PatchType Type { get; set; }
+
+            [Value(1, Required = true, HelpText = "The input file")]
+            public string InFile { get; set; }
+
+            [Value(2, Required = false, HelpText = "The data to find (0x00,0x01,0x02...) Specify wildcards as \"0x??\".")]
+            public string OriginalString { get; set; }
         }
 
     }

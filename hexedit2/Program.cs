@@ -11,13 +11,16 @@ namespace Haruka.Arcade.Hexedit2 {
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            return Parser.Default.ParseArguments<SingleOptions, MultiOptions, ScriptOptions>(args).MapResult<SingleOptions, MultiOptions, ScriptOptions, int>(RunSingle, RunMulti, RunScript, errs => 1);
+            return Parser.Default.ParseArguments<SingleOptions, MultiOptions, ScriptOptions, FindOptions>(args).MapResult<SingleOptions, MultiOptions, ScriptOptions, FindOptions, int>(RunSingle, RunMulti, RunScript, RunFind, errs => 1);
         }
 
         internal static bool IsVerbose;
+        internal static bool IsSilent;
 
         public static void Log(string str) {
-            Console.WriteLine(str);
+            if (!IsSilent) {
+                Console.WriteLine(str);
+            }
         }
 
         public static void LogVerbose(string str) {
@@ -28,6 +31,7 @@ namespace Haruka.Arcade.Hexedit2 {
 
         public static int RunSingle(SingleOptions opts) {
             IsVerbose = opts.Verbose;
+            IsSilent = opts.Silent;
 
             if (!File.Exists(opts.InFile)) {
                 Log("Input file not found: " + opts.InFile);
@@ -85,6 +89,7 @@ namespace Haruka.Arcade.Hexedit2 {
 
         public static int RunMulti(MultiOptions opts) {
             IsVerbose = opts.Verbose;
+            IsSilent = opts.Silent;
 
             if (!File.Exists(opts.InFile)) {
                 Log("Input file not found: " + opts.InFile);
@@ -142,6 +147,7 @@ namespace Haruka.Arcade.Hexedit2 {
 
         public static int RunScript(ScriptOptions opts) {
             IsVerbose = opts.Verbose;
+            IsSilent = opts.Silent;
 
             if (!File.Exists(opts.InFile)) {
                 Log("Input file not found: " + opts.InFile);
@@ -253,6 +259,40 @@ namespace Haruka.Arcade.Hexedit2 {
 
             Log("Saving to: " + opts.OutFile);
             File.WriteAllBytes(opts.OutFile, file);
+
+            return 0;
+        }
+
+        public static int RunFind(FindOptions opts) {
+            IsVerbose = opts.Verbose;
+            IsSilent = opts.Silent;
+
+            if (!File.Exists(opts.InFile)) {
+                Log("Input file not found: " + opts.InFile);
+                return 2;
+            }
+
+            byte[] file = File.ReadAllBytes(opts.InFile);
+
+            List<long> unknownsOriginal;
+
+            byte[] original;
+            try {
+                original = Patch.Parse(opts.OriginalString, opts.Type, out unknownsOriginal);
+            } catch {
+                Log("Failed to parse original string");
+                return 3;
+            }
+
+            List<long> offsets = Patch.SearchOffsets(file, original, unknownsOriginal, Int32.MaxValue);
+            if (offsets.Count == 0) {
+                Log("No matches found");
+                return 4;
+            }
+
+            foreach (long offset in offsets) {
+                Console.WriteLine("0x" + offset.ToString("X2"));
+            }
 
             return 0;
         }
