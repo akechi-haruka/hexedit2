@@ -43,7 +43,9 @@ Switches:
 
 script:
 hexedit2 single <inputfile> <outputfile> <scriptfile>
+
 Applies patches in bulk. For an example, check sample.patch.ini.
+
 Switches:
 -c: Continue even if a patch fails. (This includes 0-hits from Type=Multi)
 
