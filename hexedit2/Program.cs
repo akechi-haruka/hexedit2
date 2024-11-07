@@ -114,8 +114,13 @@ namespace Haruka.Arcade.Hexedit2 {
 
             List<long> offsets = Patch.SearchOffsets(file, original, unknownsOriginal, opts.MaximumHits);
             if (offsets.Count == 0) {
-                Log("No matches found");
-                return 5;
+                if (Patch.SearchOffsets(file, patch, unknownsPatch, 1).Count > 0) {
+                    Log("No matches, but patch was already found.");
+                    return 0;
+                } else {
+                    Log("No matches found");
+                    return 5;
+                }
             }
 
             foreach (long offset in offsets) {
@@ -215,7 +220,12 @@ namespace Haruka.Arcade.Hexedit2 {
 
                         List<long> offsets = Patch.SearchOffsets(file, original, unknownsOriginal, hits);
                         if (offsets.Count == 0) {
-                            throw new Exception("No matches found");
+                            if (Patch.SearchOffsets(file, patch, unknownsPatch, 1).Count > 0) {
+                                Log("No matches, but patch was already found.");
+                                continue;
+                            } else {
+                                throw new Exception("No matches found");
+                            }
                         }
 
                         foreach (long offset in offsets) {
