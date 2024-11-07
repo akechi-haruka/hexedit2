@@ -10,6 +10,7 @@
     <Title>Hexedit2</Title>
     <Authors>Akechi Haruka</Authors>
     <Copyright>2024 Akechi Haruka</Copyright>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
