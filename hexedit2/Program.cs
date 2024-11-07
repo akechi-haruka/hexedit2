@@ -170,8 +170,8 @@ namespace Haruka.Arcade.Hexedit2 {
                 try {
                     PatchType type = Enum.Parse<PatchType>(script[sec]["Type"]);
                     String mode = script[sec]["Mode"];
-                    String patchString = script[sec]["Patch"];
-                    String originalString = script[sec]["Original"];
+                    String patchString = script[sec]["Patch"].Trim();
+                    String originalString = script[sec]["Original"].Trim();
 
                     LogVerbose("Mode: " + mode);
                     LogVerbose("Type: " + type);
