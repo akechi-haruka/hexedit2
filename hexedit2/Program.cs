@@ -221,8 +221,11 @@ namespace Haruka.Arcade.Hexedit2 {
                         LogVerbose("Result: " + pr);
                     } else if (mode == "Multi") {
 
-                        int hits = Int32.MaxValue;
+                        int hits = 0;
                         Int32.TryParse(script[sec]["MaximumHits"], out hits);
+                        if (hits <= 0) {
+                            hits = Int32.MaxValue;
+                        }
 
                         List<long> offsets = Patch.SearchOffsets(file, original, unknownsOriginal, hits);
                         if (offsets.Count == 0) {
