@@ -31,7 +31,7 @@ hexedit2 sync_release.exe sync_release.exe 0x000698D1 0xE9,0x98,0x01,0x00 0x0F,0
 
 
 multi:
-hexedit2 single <inputfile> <outputfile> <originalbytes> <patchbytes>
+hexedit2 multi <inputfile> <outputfile> <originalbytes> <patchbytes>
 
 Find and patch any occurrences of the given originalbytes or if the offset is unknown.
 
@@ -42,8 +42,10 @@ Switches:
 
 
 script:
-hexedit2 single <inputfile> <outputfile> <scriptfile>
+hexedit2 script <inputfile> <outputfile> <scriptfile>
+
 Applies patches in bulk. For an example, check sample.patch.ini.
+
 Switches:
 -c: Continue even if a patch fails. (This includes 0-hits from Type=Multi)
 
