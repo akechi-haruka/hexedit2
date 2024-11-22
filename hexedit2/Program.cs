@@ -280,6 +280,10 @@ namespace Haruka.Arcade.Hexedit2 {
                                     throw;
                                 }
 
+                                if (type != PatchType.Binary) {
+                                    Log("Searching for string: " + originalString);
+                                }
+
                                 List<long> offsets = Patch.SearchOffsets(file, original, unknownsOriginal, hits);
                                 if (offsets.Count == 0) {
                                     if (Patch.SearchOffsets(file, patch, unknownsPatch, 1).Count > 0) {
