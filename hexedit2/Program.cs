@@ -169,9 +169,15 @@ namespace Haruka.Arcade.Hexedit2 {
                 Log("Processing: " + sec);
                 try {
                     PatchType type = Enum.Parse<PatchType>(script[sec]["Type"]);
+                    String enabled = script[sec]["Enabled"];
                     String mode = script[sec]["Mode"];
                     String patchString = script[sec]["Patch"]?.Trim();
                     String originalString = script[sec]["Original"]?.Trim();
+
+                    if (String.IsNullOrWhiteSpace(enabled) || (enabled != "1" && enabled.ToUpper() != "TRUE")) {
+                        Log(sec + " is disabled, continuing...");
+                        continue;
+                    }
 
                     LogVerbose("Mode: " + mode);
                     LogVerbose("Type: " + type);
