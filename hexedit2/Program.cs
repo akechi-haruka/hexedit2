@@ -42,7 +42,7 @@ namespace Haruka.Arcade.Hexedit2 {
 
             long offset;
             try {
-                offset = Convert.ToInt64(opts.Offset);
+                offset = Convert.ToInt64(opts.Offset, 16);
             } catch {
                 Log("Failed to parse offset");
                 return 3;
@@ -214,7 +214,7 @@ namespace Haruka.Arcade.Hexedit2 {
                     if (mode == "Single") {
                         long offset = 0;
                         try {
-                            offset = Convert.ToInt64(script[sec]["Offset"]);
+                            offset = Convert.ToInt64(script[sec]["Offset"], 16);
                         } catch {
                             Log("Failed to parse offset");
                             throw;
