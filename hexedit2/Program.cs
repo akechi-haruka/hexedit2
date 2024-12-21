@@ -174,7 +174,7 @@ namespace Haruka.Arcade.Hexedit2 {
                     String patchString = script[sec]["Patch"]?.Trim();
                     String originalString = script[sec]["Original"]?.Trim();
 
-                    if (String.IsNullOrWhiteSpace(enabled) || (enabled != "1" && enabled.ToUpper() != "TRUE")) {
+                    if (!String.IsNullOrWhiteSpace(enabled) && (enabled != "1" && enabled.ToUpper() != "TRUE")) {
                         Log(sec + " is disabled, continuing...");
                         continue;
                     }
@@ -267,7 +267,7 @@ namespace Haruka.Arcade.Hexedit2 {
                         }
 
                         foreach (KeyData kd in sd.Keys) {
-                            if (kd.KeyName != "Type" && kd.KeyName != "Mode" && kd.KeyName != "MaximumHits") {
+                            if (kd.KeyName != "Type" && kd.KeyName != "Mode" && kd.KeyName != "MaximumHits" && kd.KeyName != "Enabled") {
 
                                 originalString = kd.KeyName;
                                 patchString = kd.Value;
