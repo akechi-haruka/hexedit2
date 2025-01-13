@@ -324,6 +324,11 @@ namespace Haruka.Arcade.Hexedit2 {
                         throw;
                     }
                 }
+
+                if (opts.PauseAfterEach) {
+                    Log("Press enter to continue...");
+                    Console.ReadLine();
+                }
             }
 
             Log("Saving to: " + opts.OutFile);

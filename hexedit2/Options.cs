@@ -77,6 +77,9 @@ namespace Haruka.Arcade.Hexedit2 {
             [Option('c', Required = false, HelpText = "Continue even if a patch fails")]
             public bool ContinueOnError { get; set; }
 
+            [Option('p', Required = false, HelpText = "Pause after each patch")]
+            public bool PauseAfterEach { get; set; }
+
             [Value(1, Required = true, HelpText = "The input file")]
             public string InFile { get; set; }
 
