@@ -92,7 +92,7 @@ namespace Haruka.Arcade.Hexedit2 {
         }
 
         public enum PatchType {
-            Binary, StringASCII, StringUTF8, StringShiftJIS
+            Binary, StringASCII, StringUTF8, StringShiftJIS, StringUTF16LE, StringUTF16BE
         }
 
         [Verb("find", HelpText = "Find an offset")]

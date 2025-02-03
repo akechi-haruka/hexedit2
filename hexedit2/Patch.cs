@@ -33,6 +33,10 @@ namespace Haruka.Arcade.Hexedit2 {
                 return Encoding.UTF8.GetBytes(ReplaceSpecialCharacters(patchString));
             } else if (type == PatchType.StringShiftJIS) {
                 return Encoding.GetEncoding("SHIFT-JIS").GetBytes(ReplaceSpecialCharacters(patchString));
+            } else if (type == PatchType.StringUTF16LE) {
+                return Encoding.Unicode.GetBytes(ReplaceSpecialCharacters(patchString));
+            } else if (type == PatchType.StringUTF16BE) {
+                return Encoding.BigEndianUnicode.GetBytes(ReplaceSpecialCharacters(patchString));
             } else {
                 throw new Exception("invalid patch type: " + type);
             }
