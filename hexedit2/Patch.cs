@@ -43,7 +43,7 @@ namespace Haruka.Arcade.Hexedit2 {
         }
 
         internal static String ReplaceSpecialCharacters(string str) {
-            return str.Replace("\\n", "\n").Replace("\\t", "\t").Replace("\\0", "\0").Replace("\\[", "[");
+            return str.Replace("\\n", "\n").Replace("\\t", "\t").Replace("\\ ", " ").Replace("\\\u3000", "\u3000").Replace("\\0", "\0").Replace("\\[", "[");
         }
 
         internal static PatchResult ApplyPatch(ref byte[] data, long offset, byte[] patch, byte[] original, List<long> unknownBytesPatch, List<long> unknownBytesOriginal, bool isString = false) {

@@ -171,8 +171,17 @@ namespace Haruka.Arcade.Hexedit2 {
                     PatchType type = Enum.Parse<PatchType>(script[sec]["Type"]);
                     String enabled = script[sec]["Enabled"];
                     String mode = script[sec]["Mode"];
-                    String patchString = script[sec]["Patch"]?.Trim();
-                    String originalString = script[sec]["Original"]?.Trim();
+                    String patchString = script[sec]["Patch"];
+                    String originalString = script[sec]["Original"];
+
+                    if (!Boolean.TryParse(script[sec]["StringTrim"], out bool stringTrim)) {
+                        stringTrim = true;
+                    }
+
+                    if (stringTrim) {
+                        patchString = patchString?.Trim();
+                        originalString = originalString?.Trim();
+                    }
 
                     if (!String.IsNullOrWhiteSpace(enabled) && (enabled != "1" && enabled.ToUpper() != "TRUE")) {
                         Log(sec + " is disabled, continuing...");
@@ -267,10 +276,15 @@ namespace Haruka.Arcade.Hexedit2 {
                         }
 
                         foreach (KeyData kd in sd.Keys) {
-                            if (kd.KeyName != "Type" && kd.KeyName != "Mode" && kd.KeyName != "MaximumHits" && kd.KeyName != "Enabled") {
+                            if (kd.KeyName != "Type" && kd.KeyName != "Mode" && kd.KeyName != "MaximumHits" && kd.KeyName != "Enabled" && kd.KeyName != "StringTrim") {
 
                                 originalString = kd.KeyName;
                                 patchString = kd.Value;
+                                
+                                if (stringTrim) {
+                                    patchString = patchString?.Trim();
+                                    originalString = originalString?.Trim();
+                                }
 
                                 try {
                                     patch = Patch.Parse(patchString, type, out unknownsPatch);
