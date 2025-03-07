@@ -23,7 +23,7 @@ jobs:
 #      run: dotnet test --no-build --verbosity normal
     - name: Publish
       run: |
-        dotnet publish .\hexedit2\hexedit2.csproj --configuration Release /p:PublishProfile=.\hexedit2\Publish.pubxml
+        dotnet publish .\hexedit2\hexedit2.csproj --configuration Release /p:PublishProfile=.\Publish.pubxml
     - name: Upload
       uses: actions/upload-artifact@v4.3.3
       with:
